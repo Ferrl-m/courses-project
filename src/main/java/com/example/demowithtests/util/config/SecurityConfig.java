@@ -1,16 +1,21 @@
 package com.example.demowithtests.util.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.web.SecurityFilterChain;
 
 @EnableWebSecurity
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
+@Configuration
+public class SecurityConfig {
 
     // TODO: 18-Oct-22 Create 2 users for demo
-    @Override
+    @Autowired
     public void configure(AuthenticationManagerBuilder auth) throws Exception {
 
         auth.inMemoryAuthentication()
@@ -22,21 +27,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     // TODO: 18-Oct-22 Secure the endpoins with HTTP Basic authentication
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
+    @Bean
+    protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http
                 //HTTP Basic authentication
-                .httpBasic()
-                .and()
-                .authorizeRequests()
-                .antMatchers(HttpMethod.GET, "/api/users/**").hasRole("USER")
-                .antMatchers(HttpMethod.POST, "/api/users").hasRole("ADMIN")
-                .antMatchers(HttpMethod.PUT, "/api/users/**").hasRole("ADMIN")
-                .antMatchers(HttpMethod.PATCH, "/api/users/**").hasRole("ADMIN")
-                .antMatchers(HttpMethod.DELETE, "/api/users/**").hasRole("ADMIN")
-                .and()
-                .csrf().disable()
-                .formLogin().disable();
+                .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers(HttpMethod.GET, "/api/users/**").hasRole("USER")
+                        .requestMatchers(HttpMethod.POST, "/api/users").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/users/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PATCH, "/api/users/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/users/**").hasRole("ADMIN"))
+                .csrf(AbstractHttpConfigurer::disable)
+                .formLogin(AbstractHttpConfigurer::disable);
+
+        return http.build();
     }
 }
