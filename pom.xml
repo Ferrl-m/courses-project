@@ -17,7 +17,7 @@
     <description>demoWithTests</description>
 
     <properties>
-        <java.version>11</java.version>
+        <java.version>17</java.version>
     </properties>
 
     <dependencies>
@@ -83,7 +83,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.24</version>
+            <version>1.18.26</version>
             <scope>provided</scope>
         </dependency>
         <!-- postgresql -->
@@ -98,18 +98,6 @@
             <artifactId>h2</artifactId>
             <version>2.1.214</version>
             <scope>test</scope>
-        </dependency>
-        <!-- orika -->
-        <dependency>
-            <groupId>dev.akkinoc.spring.boot</groupId>
-            <artifactId>orika-spring-boot-starter</artifactId>
-            <version>2.3.3</version>
-        </dependency>
-        <dependency>
-            <groupId>ma.glasnost.orika</groupId>
-            <artifactId>orika-core</artifactId>
-            <version>1.5.4</version>
-            <scope>compile</scope>
         </dependency>
         <!-- swagger -->
         <dependency>
@@ -127,13 +115,13 @@
         <dependency>
             <groupId>org.mapstruct</groupId>
             <artifactId>mapstruct</artifactId>
-            <version>1.5.1.Final</version>
+            <version>1.5.4.Final</version>
         </dependency>
         <!-- mapstruct-processor -->
         <dependency>
             <groupId>org.mapstruct</groupId>
             <artifactId>mapstruct-processor</artifactId>
-            <version>1.5.1.Final</version>
+            <version>1.5.4.Final</version>
         </dependency>
 
         <dependency>
