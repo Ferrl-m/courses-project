@@ -8,6 +8,7 @@ import com.example.demowithtests.util.annotations.entity.Name;
 import com.example.demowithtests.util.annotations.entity.ToLowerCase;
 import com.example.demowithtests.util.exception.ResourceNotFoundException;
 import com.example.demowithtests.util.exception.ResourceWasDeletedException;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -16,9 +17,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityNotFoundException;
-import jakarta.persistence.PersistenceContext;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -30,9 +28,6 @@ public class EmployeeServiceBean implements EmployeeService {
     private final EmployeeRepository employeeRepository;
     private final EmailSenderService emailSenderService;
 
-    @PersistenceContext
-    private EntityManager entityManager;
-
 
     @Override
     @ActivateCustomAnnotations({Name.class, ToLowerCase.class})
@@ -42,20 +37,15 @@ public class EmployeeServiceBean implements EmployeeService {
     }
 
     @Override
-    public Employee createEM(Employee employee) {
-        return entityManager.merge(employee);
-    }
-
-    @Override
     public List<Employee> getAll() {
         return employeeRepository.findAll();
     }
 
     @Override
     public Page<Employee> getAllWithPagination(Pageable pageable) {
-        //log.debug("getAllWithPagination() - start: pageable = {}", pageable);
+        log.debug("getAllWithPagination() - start: pageable = {}", pageable);
         Page<Employee> list = employeeRepository.findAll(pageable);
-        //log.debug("getAllWithPagination() - end: list = {}", list);
+        log.debug("getAllWithPagination() - end: list = {}", list);
         return list;
     }
 
@@ -168,7 +158,7 @@ public class EmployeeServiceBean implements EmployeeService {
 
     @Override
     public List<Employee> filterByCountry(String country) {
-        return employeeRepository.findByCountry(country);
+        return employeeRepository.findEmployeesByCountry(country);
     }
 
     @Override
@@ -194,5 +184,14 @@ public class EmployeeServiceBean implements EmployeeService {
         });
 
         return emails;
+    }
+
+    /**
+     * @param name
+     * @return
+     */
+    @Override
+    public List<Employee> findByNameContaining(String name) {
+        return employeeRepository.findByNameContaining(name);
     }
 }
