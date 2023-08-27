@@ -15,6 +15,7 @@ import java.util.Set;
 @Setter
 @Getter
 @Builder
+@NamedEntityGraph(name = "user_entity-graph", attributeNodes = @NamedAttributeNode("addresses"))
 public final class Employee {
 
     @Id
@@ -36,8 +37,8 @@ public final class Employee {
 
     @Enumerated(EnumType.STRING)
     private Gender gender;
-//
-//    @OneToOne  (cascade = CascadeType.ALL)
-//    @JoinColumn(name = "document_id", referencedColumnName = "id")
-//    private Document document;
+
+    @OneToOne  (cascade = CascadeType.ALL)
+    @JoinColumn(name = "document_id", referencedColumnName = "id")
+    private Document document;
 }

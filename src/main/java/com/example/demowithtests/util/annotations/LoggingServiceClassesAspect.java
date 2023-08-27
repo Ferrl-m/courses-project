@@ -5,15 +5,13 @@ import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.*;
 import org.hibernate.SessionFactory;
 import org.hibernate.stat.Statistics;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Collection;
 
-import static com.example.demowithtests.util.annotations.LogColorConstants.ANSI_BLUE;
-import static com.example.demowithtests.util.annotations.LogColorConstants.ANSI_RESET;
+import static com.example.demowithtests.util.annotations.LogColorConstants.*;
 
 @Log4j2
 @Aspect
@@ -23,7 +21,6 @@ public class LoggingServiceClassesAspect {
     private LocalDateTime startTime;
     private final Statistics hibernateStatistics;
 
-    @Autowired
     public LoggingServiceClassesAspect(SessionFactory sessionFactory) {
         this.hibernateStatistics = sessionFactory.getStatistics();
     }
@@ -32,8 +29,8 @@ public class LoggingServiceClassesAspect {
     public void callAtMyServicesPublicMethods() {
     }
 
-    @Pointcut("execution(public * com.example.demowithtests.service.fillDataBase.LoaderServiceBean.*(..))")
-    public void callAtLoader() {
+    @Pointcut("execution(public * com.example.demowithtests.repository..*.*(..))")
+    public void callAtRepo() {
     }
 
     @Before("callAtMyServicesPublicMethods()")
@@ -66,10 +63,10 @@ public class LoggingServiceClassesAspect {
             log.debug(ANSI_BLUE + "Service: " + methodName + " - end." + ANSI_RESET);
         }
     }
-    @AfterReturning("callAtLoader()")
+    @AfterReturning("callAtRepo()")
     public void countSqlQueries() {
         long queryCounter = hibernateStatistics.getPrepareStatementCount();
-        log.debug("SQL queries:" + queryCounter);
+        log.debug(ANSI_YELLOW + "SQL queries:" + queryCounter);
         hibernateStatistics.clear();
     }
 }
