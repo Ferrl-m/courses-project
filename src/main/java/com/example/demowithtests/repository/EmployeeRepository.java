@@ -1,6 +1,7 @@
 package com.example.demowithtests.repository;
 
 import com.example.demowithtests.domain.Employee;
+import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,12 +28,6 @@ public interface EmployeeRepository extends JpaRepository<Employee, Integer> {
     @EntityGraph(type = EntityGraph.EntityGraphType.FETCH, value = "user_entity-graph")
     @Query(value = "SELECT u.* FROM users u JOIN addresses a ON u.id = a.employee_id " +
             "WHERE u.gender = :gender AND a.country = :country", nativeQuery = true)
-    /*@Query(value = "" +
-            "select users.id, users.name, users.email, employee_id, addresses.country AS address_co, users.country AS users_co, gender " +
-            "from users " +
-            "join addresses " +
-            "on users.id  = addresses.employee_id " +
-            "where users.gender = :gender and addresses.country = :country", nativeQuery = true)*/
     List<Employee> findByGender(String gender, String country);
 
     @EntityGraph(type = EntityGraph.EntityGraphType.FETCH, value = "user_entity-graph")
@@ -65,6 +60,26 @@ public interface EmployeeRepository extends JpaRepository<Employee, Integer> {
     Optional<List<Employee>> findAllUkrainian();
 
     @Override
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    @Transactional
     @EntityGraph(type = EntityGraph.EntityGraphType.FETCH, value = "user_entity-graph")
     <S extends Employee> List<S> saveAll(Iterable<S> entities);
+
+    @Override
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    @Transactional
+    @EntityGraph(type = EntityGraph.EntityGraphType.FETCH, value = "user_entity-graph")
+    <S extends Employee> S save(S entity);
+
+    @Override
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    @Transactional
+    @EntityGraph(type = EntityGraph.EntityGraphType.FETCH, value = "user_entity-graph")
+    void delete(Employee entity);
+
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    @Transactional
+    @Override
+    @EntityGraph(type = EntityGraph.EntityGraphType.FETCH, value = "user_entity-graph")
+    void deleteAll();
 }
